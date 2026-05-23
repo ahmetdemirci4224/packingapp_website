@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const ProductCard = ({ product }) => {
   // Resim yoksa placeholder atayalım
   const imageUrl = product.imageUrl || 'https://via.placeholder.com/300x200?text=Ambalaj+Resmi';
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <Link to={`/urun/${product.id}`} className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 block">
       <div className="relative h-48 w-full">
         <img 
           src={imageUrl} 
@@ -18,23 +19,26 @@ const ProductCard = ({ product }) => {
       </div>
       
       <div className="p-5">
-        <h3 className="text-xl font-semibold text-gray-800 mb-2 truncate">{product.name}</h3>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2 truncate group-hover:text-[#1e3a8a] transition-colors">{product.name}</h3>
         
         <div className="flex justify-between items-center mb-4 text-sm text-gray-600">
           <span>SKU: {product.sku}</span>
           {product.price && <span className="font-bold text-lg text-blue-700">{product.price} ₺</span>}
         </div>
         
-        <div className="border-t border-gray-200 pt-3">
+        <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
           <p className="text-sm font-medium text-gray-500">
             Stok Durumu: 
             <span className={product.stockQuantity > 0 ? "text-green-600 ml-1" : "text-red-600 ml-1"}>
               {product.stockQuantity > 0 ? `${product.stockQuantity} Adet` : 'Tükendi'}
             </span>
           </p>
+          <span className="text-[#1e3a8a] text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+            İncele &rarr;
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
