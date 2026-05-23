@@ -26,16 +26,13 @@ const ProductCard = ({ product }) => {
           {product.price && <span className="font-bold text-lg text-blue-700">{product.price} ₺</span>}
         </div>
         
-        <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
+        <div className="border-t border-gray-200 pt-3">
           <p className="text-sm font-medium text-gray-500">
             Stok Durumu: 
             <span className={product.stockQuantity > 0 ? "text-green-600 ml-1" : "text-red-600 ml-1"}>
               {product.stockQuantity > 0 ? `${product.stockQuantity} Adet` : 'Tükendi'}
             </span>
           </p>
-          <span className="text-[#1e3a8a] text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-            İncele &rarr;
-          </span>
         </div>
       </div>
     </Link>
