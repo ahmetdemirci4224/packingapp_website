@@ -5,9 +5,6 @@ const API_BASE_URL = 'https://packingapp-website-api.onrender.com/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 export const ProductService = {
