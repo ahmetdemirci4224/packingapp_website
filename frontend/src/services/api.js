@@ -61,11 +61,7 @@ export const ProductService = {
       const formData = new FormData();
       formData.append('file', file);
       
-      const response = await apiClient.post('/products/upload-image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
-      });
+      const response = await apiClient.post('/products/upload-image', formData);
       // Backend bize { imageUrl: '/images/dosyaadi.jpg' } dönecek. Biz url'i tam adres yapacağız
       return API_BASE_URL.replace('/api', '') + response.data.imageUrl;
     } catch (error) {

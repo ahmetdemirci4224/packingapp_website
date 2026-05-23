@@ -76,7 +76,7 @@ public class ProductsController : ControllerBase
 
     // POST: api/products/upload-image
     [HttpPost("upload-image")]
-    public async Task<IActionResult> UploadImage(IFormFile file)
+    public async Task<IActionResult> UploadImage([FromForm] IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest("Dosya seçilmedi.");
