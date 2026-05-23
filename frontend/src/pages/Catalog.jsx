@@ -7,6 +7,7 @@ const Catalog = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortType, setSortType] = useState('recommended');
   const location = useLocation();
 
   useEffect(() => {
@@ -59,6 +60,14 @@ const Catalog = () => {
     );
   }
 
+  // Sıralama mantığı
+  const sortedProducts = [...products].sort((a, b) => {
+    if (sortType === 'price-asc') return a.price - b.price;
+    if (sortType === 'price-desc') return b.price - a.price;
+    if (sortType === 'newest') return b.id - a.id;
+    return 0; // recommended
+  });
+
   return (
     <div className="bg-gray-50 min-h-screen py-6">
       <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-6">
@@ -100,18 +109,17 @@ const Catalog = () => {
             
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600">Sırala:</span>
-              <select className="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-md py-1.5 px-3 focus:outline-none focus:border-[#1e3a8a]">
-                <option>Önerilen Sıralama</option>
-                <option>En Düşük Fiyat</option>
-                <option>En Yüksek Fiyat</option>
-                <option>En Yeniler</option>
-                <option>Çok Satanlar</option>
+              <select value={sortType} onChange={(e) => setSortType(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-md py-1.5 px-3 focus:outline-none focus:border-[#1e3a8a]">
+                <option value="recommended">Önerilen Sıralama</option>
+                <option value="price-asc">En Düşük Fiyat</option>
+                <option value="price-desc">En Yüksek Fiyat</option>
+                <option value="newest">En Yeniler</option>
               </select>
             </div>
           </div>
 
           {/* Ürün Grid */}
-          {products.length === 0 ? (
+          {sortedProducts.length === 0 ? (
              <div className="bg-white p-12 rounded-lg shadow-sm border border-gray-200 text-center">
                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -121,7 +129,7 @@ const Catalog = () => {
              </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-              {products.map((product) => (
+              {sortedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
