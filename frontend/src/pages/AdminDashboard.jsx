@@ -131,7 +131,8 @@ const AdminDashboard = () => {
       const uploadedUrl = await ProductService.uploadImage(file);
       setFormData(prev => ({ ...prev, imageUrl: uploadedUrl }));
     } catch (error) {
-      alert("Resim yüklenemedi!");
+      console.error("Upload error details:", error.response || error);
+      alert("Resim yüklenemedi! Hata Detayı: " + (error.response?.data || error.message));
     } finally {
       setUploadingImage(false);
     }
