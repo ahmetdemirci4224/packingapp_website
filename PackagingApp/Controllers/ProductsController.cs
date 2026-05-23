@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using PackagingApp.DTOs;
 using PackagingApp.Repositories;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.Extensions.Configuration;
 
 namespace PackagingApp.Controllers;
 
@@ -9,10 +12,12 @@ namespace PackagingApp.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productRepository;
+    private readonly IConfiguration _configuration;
 
-    public ProductsController(IProductRepository productRepository)
+    public ProductsController(IProductRepository productRepository, IConfiguration configuration)
     {
         _productRepository = productRepository;
+        _configuration = configuration;
     }
 
     // GET: api/products
@@ -81,20 +86,31 @@ public class ProductsController : ControllerBase
         if (file == null || file.Length == 0)
             return BadRequest("Dosya seçilmedi.");
 
-        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-        if (!Directory.Exists(uploadsFolder))
-            Directory.CreateDirectory(uploadsFolder);
+        var cloudName = _configuration["Cloudinary:CloudName"];
+        var apiKey = _configuration["Cloudinary:ApiKey"];
+        var apiSecret = _configuration["Cloudinary:ApiSecret"];
 
-        var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+        Account account = new Account(cloudName, apiKey, apiSecret);
+        Cloudinary cloudinary = new Cloudinary(account);
 
-        using (var stream = new FileStream(filePath, FileMode.Create))
+        var uploadResult = new ImageUploadResult();
+
+        using (var stream = file.OpenReadStream())
         {
-            await file.CopyToAsync(stream);
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(file.FileName, stream),
+                Folder = "dempa_ambalaj" // Cloudinary'de düzenli durması için bir klasör
+            };
+            uploadResult = await cloudinary.UploadAsync(uploadParams);
         }
 
-        // Return the path that the frontend can use to display the image
-        var imageUrl = $"/images/{uniqueFileName}";
-        return Ok(new { ImageUrl = imageUrl });
+        if (uploadResult.Error != null)
+        {
+            return BadRequest(uploadResult.Error.Message);
+        }
+
+        // Return the secure URL from Cloudinary
+        return Ok(new { ImageUrl = uploadResult.SecureUrl.ToString() });
     }
 }

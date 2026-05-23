@@ -62,8 +62,8 @@ export const ProductService = {
       formData.append('file', file);
       
       const response = await apiClient.post('/products/upload-image', formData);
-      // Backend bize { imageUrl: '/images/dosyaadi.jpg' } dönecek. Biz url'i tam adres yapacağız
-      return API_BASE_URL.replace('/api', '') + response.data.imageUrl;
+      // Artık backend doğrudan Cloudinary'nin "https://res.cloudinary.com/..." şeklindeki tam adresini döndürüyor
+      return response.data.imageUrl;
     } catch (error) {
       console.error('Resim yüklenirken hata oluştu:', error);
       throw error;
